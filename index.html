@@ -1,0 +1,3379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRAZY MOVIES</title>
+    <link rel="icon" href="img/icono.png">
+    <style>
+        /* Estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-image: url('img/fondo1.jpg');
+            background-size: cover;      /* Para que cubra toda la pantalla */
+            background-position: center; /* Centrado */
+            background-repeat: no-repeat;/* Que no se repita */
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        /* Encabezado */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+            width: 100%;
+        }
+
+        /* Contenedor del logo y buscador */
+        .logo-search-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .logo {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: bold;
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        /* Estilos del buscador */
+        .search-container {
+            position: relative;
+            max-width: 250px;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 35px 8px 12px;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.2);
+        }
+
+        .search-input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8b5cf6;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .search-result-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-result-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-image {
+            width: 40px;
+            height: 50px;
+            border-radius: 4px;
+            object-fit: cover;
+            background-color: #e5e7eb;
+        }
+
+        .search-result-info {
+            flex: 1;
+        }
+
+        .search-result-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .search-result-category {
+            font-size: 12px;
+            color: #8b5cf6;
+        }
+
+        .no-results {
+            padding: 15px;
+            text-align: center;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        /* Botones de navegación */
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Estilo común para botones de navegación */
+        .nav-button {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+            animation: buttonGlow 2s ease-in-out infinite alternate;
+            font-weight: 600;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            text-transform: none;
+            white-space: nowrap;
+            margin: 5px;
+            min-width: fit-content;
+            border: none;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
+            background: linear-gradient(45deg, #7c3aed, #2563eb);
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+            }
+            to {
+                text-shadow: 0 0 30px rgba(139, 92, 246, 0.8),
+                            0 0 40px rgba(59, 130, 246, 0.6);
+            }
+        }
+
+        @keyframes buttonGlow {
+            from {
+                box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+            }
+            to {
+                box-shadow: 0 0 25px rgba(139, 92, 246, 0.7),
+                            0 0 35px rgba(59, 130, 246, 0.5);
+            }
+        }
+
+        .cart-icon, .user-icon {
+            margin-right: 8px;
+            padding: 5px;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ef4444;
+            color: white;
+            font-size: 12px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Carrusel de películas - MODIFICADO PARA OCUPAR TODO EL ANCHO */
+        .carousel-container {
+            position: relative;
+            margin: 0 -20px 30px -20px; /* Extiende más allá del contenedor */
+            width: calc(100% + 40px); /* Compensa el margen negativo */
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            border-radius: 0; /* Sin bordes redondeados para efecto completo */
+            padding: 3px;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+            animation: buttonGlow 2s ease-in-out infinite alternate;
+        }
+
+        .carousel {
+            position: relative;
+            height: 500px; /* Aumentado para más impacto visual */
+            background-color: #1a1a1a;
+            border-radius: 0;
+            overflow: hidden;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 60px;
+        }
+
+        .carousel-content {
+            max-width: 600px;
+            color: white;
+        }
+
+        .carousel-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: bold;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .carousel-description {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .carousel-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .carousel-play-btn, .carousel-info-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .carousel-play-btn {
+            background: white;
+            color: black;
+        }
+
+        .carousel-play-btn:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+        .carousel-info-btn {
+            background: rgba(109, 109, 110, 0.7);
+            color: white;
+        }
+
+        .carousel-info-btn:hover {
+            background: rgba(109, 109, 110, 0.9);
+            transform: scale(1.05);
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: 1px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 20px;
+        }
+
+        .carousel-nav:hover {
+            background: rgba(0, 0, 0, 0.7);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-prev {
+            left: 20px;
+        }
+
+        .carousel-next {
+            right: 20px;
+        }
+
+        /* Pestañas */
+        .tabs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
+        .tab-button {
+            padding: 12px;
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);
+            animation: buttonGlow 2s ease-in-out infinite alternate;
+            font-weight: 600;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            white-space: nowrap;
+        }
+
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5);
+            background: linear-gradient(45deg, #7c3aed, #2563eb);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(45deg, #6d28d9, #1d4ed8);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.6);
+            transform: translateY(-2px);
+            animation: buttonGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        /* Contenedor de películas */
+        .movies-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        /* Tarjeta de película */
+        .movie-card {
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            padding: 3px;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+            animation: buttonGlow 2s ease-in-out infinite alternate;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(45deg, #7c3aed, #2563eb);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.5);
+        }
+
+        .movie-image {
+            position: relative;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            cursor: pointer;
+            background-color: #e5e7eb;
+            border-radius: 9px 9px 0 0;
+        }
+
+        .movie-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .movie-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .movie-info {
+            padding: 16px;
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            border-radius: 0 0 9px 9px;
+            color: white;
+        }
+
+        .movie-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: white;
+        }
+
+        .rating {
+            display: flex;
+            margin: 4px 0;
+        }
+
+        .star {
+            color: #d1d5db;
+            font-size: 16px;
+        }
+
+        .star.filled {
+            color: #fbbf24;
+        }
+
+        .price {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 8px 0;
+            color: white;
+        }
+
+        .add-to-cart-button {
+            width: 100%;
+            padding: 8px 0;
+            background-color: #86efac;
+            color: #166534;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .add-to-cart-button:hover {
+            background-color: #4ade80;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+            transform: scale(1.02);
+        }
+
+        .add-to-cart-button:active {
+            background-color: #22c55e;
+            transform: scale(0.98);
+        }
+
+        /* Botón de trailer */
+        .trailer-button {
+            width: 100%;
+            padding: 8px 0;
+            background-color: #f59e0b;
+            color: #92400e;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .trailer-button:hover {
+            background-color: #d97706;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+            transform: scale(1.02);
+        }
+
+        .trailer-button:active {
+            background-color: #b45309;
+            transform: scale(0.98);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+            background: none;
+            border: none;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .movie-image-container {
+            position: relative;
+            aspect-ratio: 3/4;
+            background-color: #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .movie-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .movie-details {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            color: white;
+        }
+
+        .movie-details h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .movie-details p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .category {
+            font-size: 14px;
+            color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* Estilos para actores */
+        .actors-section {
+            margin: 15px 0;
+        }
+
+        .actors-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #8b5cf6;
+            margin-bottom: 8px;
+        }
+
+        .actors-list {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        /* Carrito de compras */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            background-color: #a78bfa;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: right 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            background-color: #a78bfa;
+        }
+
+        .cart-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #a78bfa;
+            color: white;
+        }
+
+        .cart-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70vh;
+            text-align: center;
+            color: white;
+        }
+
+        .cart-items {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .cart-item-image {
+            width: 64px;
+            height: 64px;
+            border-radius: 4px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background-color: #e5e7eb;
+        }
+
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .cart-item-title {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: white;
+        }
+
+        .cart-item-price {
+            font-size: 14px;
+            color: white;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .cart-total {
+            padding: 16px 20px;
+            border-top: 1px solid #e5e7eb;
+            color: white;
+            background-color: #a78bfa;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .checkout-form {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: white;
+            background-color: #a78bfa;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .primary-button {
+            flex: 1;
+            padding: 10px 0;
+            background-color: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .primary-button:hover:not(:disabled) {
+            background-color: #7c3aed;
+        }
+
+        .primary-button:disabled {
+            background-color: #c4b5fd;
+            cursor: not-allowed;
+        }
+
+        .secondary-button {
+            padding: 10px 16px;
+            background-color: white;
+            color: #333;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .secondary-button:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* Historial de compras */
+        .purchase-history {
+            display: none;
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            color: white;
+        }
+
+        .purchase-history-header {
+            background: linear-gradient(45deg, #6d28d9, #1d4ed8);
+            color: white;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .purchase-history-content {
+            padding: 20px;
+        }
+
+        .purchase-search {
+            margin-bottom: 20px;
+        }
+
+        .purchase-search input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .purchase-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .purchase-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .purchase-date {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 5px;
+        }
+
+        .purchase-movies {
+            font-size: 14px;
+        }
+
+        .purchase-total {
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        /* Modal de autenticación */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            z-index: 1002;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-content {
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            color: white;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .auth-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: white;
+            border-bottom: 2px solid transparent;
+        }
+
+        .auth-tab.active {
+            color: white;
+            border-bottom: 2px solid white;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .auth-form h3 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #6d28d9;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .auth-button:hover {
+            background-color: #5b21b6;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .auth-cancel {
+            flex: 1;
+            padding: 12px;
+            background-color: #e5e7eb;
+            color: #4b5563;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .auth-cancel:hover {
+            background-color: #d1d5db;
+        }
+
+        /* Panel de administración */
+        .admin-panel {
+            display: none;
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            color: white;
+        }
+
+        .admin-header {
+            background: linear-gradient(45deg, #6d28d9, #1d4ed8);
+            color: white;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .admin-content {
+            padding: 20px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: white;
+            border-bottom: 2px solid transparent;
+            background: none;
+            border: none;
+            border-radius: 0;
+        }
+
+        .admin-tab.active {
+            border-bottom: 2px solid white;
+        }
+
+        .admin-tab-content {
+            display: none;
+        }
+
+        .admin-tab-content.active {
+            display: block;
+        }
+
+        .admin-form {
+            display: grid;
+            gap: 16px;
+            max-width: 500px;
+        }
+
+        .form-row {
+            display: grid;
+            gap: 8px;
+        }
+
+        .form-row label {
+            font-weight: 500;
+            color: white;
+        }
+
+        .form-row input,
+        .form-row textarea,
+        .form-row select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .form-row textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row.grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .admin-button {
+            padding: 10px 16px;
+            background: linear-gradient(45deg, #6d28d9, #1d4ed8);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .admin-button:hover {
+            background: linear-gradient(45deg, #5b21b6, #1e40af);
+            transform: translateY(-2px);
+        }
+
+        /* Lista de películas en admin */
+        .movies-list {
+            max-height: 400px;
+            overflow-y: auto;
+            display: grid;
+            gap: 10px;
+        }
+
+        .movie-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .movie-item-image {
+            width: 50px;
+            height: 60px;
+            border-radius: 4px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background-color: #e5e7eb;
+        }
+
+        .movie-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .movie-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .movie-item-title {
+            font-weight: 600;
+            color: white;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-item-category {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .movie-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .delete-button {
+            padding: 6px 12px;
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-button:hover {
+            background-color: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .edit-button {
+            padding: 6px 12px;
+            background-color: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .edit-button:hover {
+            background-color: #d97706;
+            transform: scale(1.05);
+        }
+
+        /* Modal de mensaje de administrador */
+        .admin-message-modal {
+            display: none;
+            position: fixed;
+            z-index: 1003;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .admin-message-content {
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            position: relative;
+            color: white;
+            text-align: center;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .admin-message-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .admin-message-content p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .admin-message-button {
+            padding: 12px 24px;
+            background-color: #6d28d9;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .admin-message-button:hover {
+            background-color: #5b21b6;
+            transform: scale(1.05);
+        }
+
+        /* Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* Estilos para la intro */
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #121212;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .intro-logo {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: bold;
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+            margin-bottom: 2rem;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .loading-bar-container {
+            width: 90%;
+            max-width: 300px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+            animation: buttonGlow 2s ease-in-out infinite alternate;
+        }
+
+        /* Footer styles */
+        footer {
+            background: black;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: auto;
+            box-shadow: 0 -15px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+        }
+
+        footer a {
+            color: #8b5cf6;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+        }
+
+        footer a:hover {
+            color: #3b82f6;
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+                gap: 10px;
+            }
+
+            .logo-search-container {
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .logo {
+                width: 100%;
+                text-align: center;
+                padding-right: 0;
+                margin-bottom: 0;
+            }
+
+            .search-container {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-button {
+                width: 100%;
+                justify-content: center;
+                margin: 5px 0;
+            }
+
+            .tabs {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 15px;
+            }
+
+            .modal-body {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-sidebar {
+                max-width: 100%;
+            }
+
+            .movies-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .movie-card {
+                margin: 0 auto;
+                width: 100%;
+                max-width: 200px;
+            }
+
+            .movie-title {
+                font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            }
+
+            .price {
+                font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            }
+
+            .carousel-title {
+                font-size: 1.5rem;
+            }
+
+            .carousel-overlay {
+                padding: 0 30px;
+            }
+
+            .carousel-content {
+                max-width: 100%;
+            }
+
+            .carousel-buttons {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .carousel-play-btn, .carousel-info-btn {
+                width: 100%;
+                max-width: 200px;
+                justify-content: center;
+            }
+
+            .admin-tabs {
+                flex-direction: column;
+            }
+
+            .admin-tab {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            .movies-container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .movie-card {
+                max-width: 100%;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 15px;
+            }
+
+            .cart-sidebar {
+                max-width: 100%;
+            }
+
+            .admin-form {
+                padding: 10px;
+            }
+
+            .form-row {
+                margin-bottom: 10px;
+            }
+
+            .carousel {
+                height: 400px;
+            }
+
+            .carousel-overlay {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Intro Screen -->
+    <div id="intro-screen" class="intro-screen">
+        <h1 class="intro-logo">CRAZY MOVIES</h1>
+        <div class="loading-bar-container">
+            <div id="loading-bar" class="loading-bar"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo-search-container">
+                <h1 class="logo">CRAZY MOVIES</h1>
+                <div class="search-container">
+                    <input type="text" id="search-input" class="search-input" placeholder="Buscar películas...">
+                    <span class="search-icon">🔍</span>
+                    <div id="search-results" class="search-results"></div>
+                </div>
+            </div>
+            <div class="nav-buttons">
+                <button id="admin-button" class="admin-button nav-button">
+                    <span class="user-icon">⚙️</span>
+                    <span>Administrar</span>
+                </button>
+                <button id="user-button" class="user-button nav-button">
+                    <span class="user-icon">👤</span>
+                    <span id="user-text">Iniciar Sesión</span>
+                </button>
+                <button id="cart-button" class="cart-button nav-button">
+                    <span class="cart-icon">🛒</span>
+                    Carrito
+                    <span id="cart-count" class="cart-count hidden">0</span>
+                </button>
+                <button id="history-button" class="history-button nav-button">
+                    <span class="user-icon">📋</span>
+                    <span>Historial</span>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Panel de Administración -->
+        <div id="admin-panel" class="admin-panel">
+            <div class="admin-header">
+                Panel de Administración
+            </div>
+            <div class="admin-content">
+                <div class="admin-tabs">
+                    <button class="admin-tab active" data-admin-tab="add">Añadir Película</button>
+                    <button class="admin-tab" data-admin-tab="manage">Gestionar Películas</button>
+                </div>
+
+                <!-- Tab para añadir películas -->
+                <div id="add-movie-tab" class="admin-tab-content active">
+                    <form id="movie-form" class="admin-form">
+                        <div class="form-row">
+                            <label for="movie-title">Título de la Película</label>
+                            <input type="text" id="movie-title" placeholder="Ej: Avatar" required>
+                        </div>
+                        <div class="form-row">
+                            <label for="movie-description">Descripción</label>
+                            <textarea id="movie-description" placeholder="Descripción detallada de la película..." required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label for="movie-actors">Actores (separados por comas)</label>
+                            <input type="text" id="movie-actors" placeholder="Ej: Leonardo DiCaprio, Kate Winslet, Billy Zane" required>
+                        </div>
+                        <div class="form-row grid-2">
+                            <div>
+                                <label for="movie-price">Precio</label>
+                                <input type="number" id="movie-price" step="0.01" placeholder="19.99" required>
+                            </div>
+                            <div>
+                                <label for="movie-year">Año de Lanzamiento</label>
+                                <input type="number" id="movie-year" placeholder="2023">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <label for="movie-category">Categoría</label>
+                            <select id="movie-category" required>
+                                <option value="">Seleccionar categoría</option>
+                                <option value="releases">Peliculas Estrenos</option>
+                                <option value="action">Peliculas Accion</option>
+                                <option value="scifi">Peliculas Ciencia Ficcion</option>
+                                <option value="horror">Peliculas Terror</option>
+                                <option value="comedy">Peliculas Comedia</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <label for="movie-rating">Calificación (Estrellas)</label>
+                            <select id="movie-rating" required>
+                                <option value="1">1 Estrella</option>
+                                <option value="2">2 Estrellas</option>
+                                <option value="3">3 Estrellas</option>
+                                <option value="4">4 Estrellas</option>
+                                <option value="5" selected>5 Estrellas</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <label for="movie-trailer-url">URL del Trailer (YouTube)</label>
+                            <input type="url" id="movie-trailer-url" placeholder="https://www.youtube.com/watch?v=...">
+                            <small>Pega aquí el enlace del trailer de YouTube</small>
+                        </div>
+                        <div class="form-row">
+                            <label for="movie-image">Imagen</label>
+                            <input type="file" id="movie-image" accept="image/*">
+                            <small>Las imágenes serán añadidas por el administrador</small>
+                        </div>
+                        <button type="submit" class="admin-button">Añadir Película</button>
+                    </form>
+                </div>
+
+                <!-- Tab para gestionar películas -->
+                <div id="manage-movies-tab" class="admin-tab-content">
+                    <h3 style="margin-bottom: 20px; color: white;">Lista de Películas</h3>
+                    <div id="movies-list" class="movies-list">
+                        <!-- Las películas se cargarán aquí dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historial de Compras -->
+        <div id="purchase-history" class="purchase-history">
+            <div class="purchase-history-header">
+                <span>Historial de Compras</span>
+                <button id="close-history" class="secondary-button">Cerrar</button>
+            </div>
+            <div class="purchase-history-content">
+                <div class="purchase-search">
+                    <input type="text" id="purchase-search-input" placeholder="Buscar por nombre de usuario...">
+                </div>
+                <div id="purchase-list" class="purchase-list">
+                    <!-- Las compras se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carrusel de Películas (Ahora ocupa todo el ancho) -->
+    <div class="carousel-container">
+        <div class="carousel">
+            <div class="carousel-slide active">
+                <img src="img/dune.jpg" alt="Dune">
+                <div class="carousel-overlay">
+                    <div class="carousel-content">
+                        <h3 class="carousel-title">Dune</h3>
+                        <p class="carousel-description">Paul Atreides, un joven brillante y talentoso nacido con un gran destino que está más allá de su comprensión, debe viajar al planeta más peligroso del universo para asegurar el futuro de su familia y su pueblo.</p>
+                        <div class="carousel-buttons">
+                            <button class="carousel-play-btn">▶ Reproducir</button>
+                            <button class="carousel-info-btn">ℹ Más información</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-slide">
+                <img src="img/spiderman.jpg" alt="Spider-Man">
+                <div class="carousel-overlay">
+                    <div class="carousel-content">
+                        <h3 class="carousel-title">Spider-Man: No Way Home</h3>
+                        <p class="carousel-description">Por primera vez en la historia cinematográfica de Spider-Man, nuestro héroe vecino y amigo es desenmascarado y ya no puede separar su vida normal de los enormes riesgos de ser un superhéroe.</p>
+                        <div class="carousel-buttons">
+                            <button class="carousel-play-btn">▶ Reproducir</button>
+                            <button class="carousel-info-btn">ℹ Más información</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-slide">
+                <img src="img/batman.jpeg" alt="Batman">
+                <div class="carousel-overlay">
+                    <div class="carousel-content">
+                        <h3 class="carousel-title">Batman</h3>
+                        <p class="carousel-description">Cuando un asesino se dirige a la élite de Gotham con una serie de maquinaciones sádicas, un rastro de pistas crípticas envía al Detective Mundial en una investigación en los bajos fondos.</p>
+                        <div class="carousel-buttons">
+                            <button class="carousel-play-btn">▶ Reproducir</button>
+                            <button class="carousel-info-btn">ℹ Más información</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-slide">
+                <img src="img/doctor.jpg" alt="Doctor Strange">
+                <div class="carousel-overlay">
+                    <div class="carousel-content">
+                        <h3 class="carousel-title">Doctor Strange</h3>
+                        <p class="carousel-description">El Dr. Stephen Strange continúa su investigación sobre la Gema del Tiempo. Pero un viejo amigo convertido en enemigo pone fin a sus planes y hace que Strange desate un mal indescriptible.</p>
+                        <div class="carousel-buttons">
+                            <button class="carousel-play-btn">▶ Reproducir</button>
+                            <button class="carousel-info-btn">ℹ Más información</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-slide">
+                <img src="img/thor.jpg" alt="Thor">
+                <div class="carousel-overlay">
+                    <div class="carousel-content">
+                        <h3 class="carousel-title">Thor: Love and Thunder</h3>
+                        <p class="carousel-description">Thor emprende un viaje diferente a todo lo que ha enfrentado: una búsqueda de la paz interior. Pero su retiro se ve interrumpido por un asesino galáctico conocido como Gorr el Carnicero de Dioses.</p>
+                        <div class="carousel-buttons">
+                            <button class="carousel-play-btn">▶ Reproducir</button>
+                            <button class="carousel-info-btn">ℹ Más información</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-nav carousel-prev">‹</button>
+            <button class="carousel-nav carousel-next">›</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" data-category="releases">Peliculas Estrenos</button>
+            <button class="tab-button" data-category="action">Peliculas Accion</button>
+            <button class="tab-button" data-category="scifi">Peliculas Ciencia Ficcion</button>
+            <button class="tab-button" data-category="horror">Peliculas Terror</button>
+            <button class="tab-button" data-category="comedy">Peliculas Comedia</button>
+        </div>
+
+        <div id="movies-container" class="movies-container">
+            <!-- Las películas se cargarán aquí dinámicamente -->
+        </div>
+    </div>
+
+    <!-- Modal para detalles de la película -->
+    <div id="movie-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-body">
+                <div class="movie-image-container">
+                    <img id="modal-image" src="/placeholder.svg" alt="">
+                </div>
+                <div class="movie-details">
+                    <h2 id="modal-title"></h2>
+                    <p id="modal-year"></p>
+                    <p id="modal-description"></p>
+                    <div id="modal-rating" class="rating"></div>
+                    <p id="modal-price" class="price"></p>
+                    <p id="modal-category" class="category"></p>
+                    
+                    <!-- Sección de actores -->
+                    <div class="actors-section">
+                        <div class="actors-title">Actores:</div>
+                        <div id="modal-actors" class="actors-list"></div>
+                    </div>
+                    
+                    <!-- Botón de trailer -->
+                    <button id="modal-trailer-button" class="trailer-button">
+                        ▶ Ver Trailer
+                    </button>
+                    
+                    <button id="modal-add-to-cart" class="add-to-cart-button">Añadir al Carrito</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Carrito de compras -->
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h2>Tu Carrito de Compras</h2>
+            <span class="close-cart">&times;</span>
+        </div>
+        <div class="cart-content">
+            <div id="cart-empty" class="cart-empty">
+                <p>Tu carrito está vacío</p>
+            </div>
+            <div id="cart-items" class="cart-items">
+                <!-- Los items del carrito se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+        <div id="cart-total" class="cart-total">
+            <div class="total-row">
+                <span>Total:</span>
+                <span id="total-amount">$0.00</span>
+            </div>
+        </div>
+        <div class="checkout-form">
+            <div class="form-group">
+                <label for="customer-name">Tu Nombre</label>
+                <input type="text" id="customer-name" placeholder="Ingresa tu nombre">
+            </div>
+            <div class="button-group">
+                <button id="checkout-button" class="primary-button" disabled>Completar Compra</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de autenticación (login/registro) -->
+    <div id="auth-modal" class="auth-modal">
+        <div class="auth-content">
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Iniciar Sesión</div>
+                <div class="auth-tab" data-tab="register">Registrarse</div>
+            </div>
+            
+            <!-- Formulario de login -->
+            <div id="login-form" class="auth-form active">
+                <h3>Iniciar Sesión</h3>
+                <input type="text" id="login-username" class="auth-input" placeholder="Nombre de usuario">
+                <input type="password" id="login-password" class="auth-input" placeholder="Contraseña">
+                <div class="auth-buttons">
+                    <button id="login-button" class="auth-button">Iniciar Sesión</button>
+                    <button id="login-cancel" class="auth-cancel">Cancelar</button>
+                </div>
+            </div>
+            
+            <!-- Formulario de registro -->
+            <div id="register-form" class="auth-form">
+                <h3>Crear Cuenta</h3>
+                <input type="text" id="register-username" class="auth-input" placeholder="Nombre de usuario">
+                <input type="password" id="register-password" class="auth-input" placeholder="Contraseña">
+                <input type="password" id="register-confirm-password" class="auth-input" placeholder="Confirmar contraseña">
+                <div class="auth-buttons">
+                    <button id="register-button" class="auth-button">Registrarse</button>
+                    <button id="register-cancel" class="auth-cancel">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de mensaje de administrador -->
+    <div id="admin-message-modal" class="admin-message-modal">
+        <div class="admin-message-content">
+            <h3>🔒 Acceso Restringido</h3>
+            <p>Solo el administrador de la página puede entrar</p>
+            <button id="admin-message-ok" class="admin-message-button">Entendido</button>
+        </div>
+    </div>
+
+    <div id="overlay" class="overlay"></div>
+
+    <script>
+        // Datos de las películas con URLs reales de YouTube y actores
+        const movieData = {
+            releases: [
+                {
+                    id: "r1",
+                    title: "Avatar: El Camino del Agua",
+                    image: "img/avatar.jpeg",
+                    price: 19.99,
+                    releaseYear: 2022,
+                    description: "Jake Sully vive con su nueva familia formada en el planeta de Pandora. Una vez que una amenaza familiar regresa para terminar lo que se empezó anteriormente, Jake debe trabajar con Neytiri y el ejército de la raza Na'vi para proteger su planeta.",
+                    rating: 5,
+                    category: "Peliculas Estrenos",
+                    trailer: "https://www.youtube.com/embed/96d3jsVWnOE?si=OnHQPkR9VYeXzI8U",
+                    actors: "Sam Worthington, Zoe Saldana, Sigourney Weaver, Stephen Lang, Kate Winslet"
+                },
+                {
+                    id: "r2",
+                    title: "Top Gun: Maverick",
+                    image: "img/top.jpg",
+                    price: 17.99,
+                    releaseYear: 2022,
+                    description: "Después de más de 30 años de servicio como uno de los mejores aviadores de la Armada, Pete 'Maverick' Mitchell está donde pertenece, empujando los límites como un valiente piloto de prueba y esquivando el avance en rango que lo pondría en tierra.",
+                    rating: 5,
+                    category: "Peliculas Estrenos",
+                    trailer: "https://www.youtube.com/embed/zzBIzYmxatU?si=42feskmZZEZlRrrJ",
+                    actors: "Tom Cruise, Miles Teller, Jennifer Connelly, Jon Hamm, Glen Powell"
+                },
+                {
+                    id: "r3",
+                    title: "Pantera Negra: Wakanda Por Siempre",
+                    image: "img/wakanda.jpeg",
+                    price: 18.99,
+                    releaseYear: 2022,
+                    description: "La reina Ramonda, Shuri, M'Baku, Okoye y las Dora Milaje luchan para proteger su nación de las potencias mundiales que intervienen tras la muerte del rey T'Challa. Mientras los wakandanos se esfuerzan por abrazar su próximo capítulo, los héroes deben unirse.",
+                    rating: 4,
+                    category: "Peliculas Estrenos",
+                    trailer: "https://www.youtube.com/embed/BPjbiZQmBI4?si=7bY-vTXLE_3KvLax",
+                    actors: "Letitia Wright, Angela Bassett, Tenoch Huerta, Danai Gurira, Lupita Nyong'o"
+                },
+                {
+                    id: "r4",
+                    title: "Todo en Todas Partes al Mismo Tiempo",
+                    image: "img/todo.jpg",
+                    price: 16.99,
+                    releaseYear: 2022,
+                    description: "Una lavandera china-estadounidense se ve arrastrada a una aventura salvaje en la que solo ella puede salvar el mundo explorando otros universos y conectando con las vidas que podría haber vivido.",
+                    rating: 5,
+                    category: "Peliculas Estrenos",
+                    trailer: "https://www.youtube.com/embed/L8P2nvNbYGk?si=VqqRKBQvUqIO-973",
+                    actors: "Michelle Yeoh, Stephanie Hsu, Ke Huy Quan, Jamie Lee Curtis, James Hong"
+                },
+                {
+                    id: "r5",
+                    title: "Batman",
+                    image: "img/bat.jpg",
+                    price: 17.99,
+                    releaseYear: 2022,
+                    description: "Cuando un asesino se dirige a la élite de Gotham con una serie de maquinaciones sádicas, un rastro de pistas crípticas envía al Detective Mundial en una investigación en los bajos fondos, donde se encuentra con personajes como Selina Kyle, Oswald Cobblepot, Carmine Falcone y Edward Nashton.",
+                    rating: 4,
+                    category: "Peliculas Estrenos",
+                    trailer: "https://www.youtube.com/embed/mqqft2x_Aa4?si=HSd0RI0PKWueh9lj",
+                    actors: "Robert Pattinson, Zoë Kravitz, Paul Dano, Jeffrey Wright, Colin Farrell"
+                },
+                {
+                    id: "r6",
+                    title: "Doctor Strange en el Multiverso de la Locura",
+                    image: "img/doc.jpg",
+                    price: 18.99,
+                    releaseYear: 2022,
+                    description: "El Dr. Stephen Strange continúa su investigación sobre la Gema del Tiempo. Pero un viejo amigo convertido en enemigo pone fin a sus planes y hace que Strange desate un mal indescriptible.",
+                    rating: 4,
+                    category: "Peliculas Estrenos",
+                    trailer: "https://www.youtube.com/embed/KREBGtEeW9U?si=sfxaK5W7UzFGGLbh",
+                    actors: "Benedict Cumberbatch, Elizabeth Olsen, Chiwetel Ejiofor, Benedict Wong, Xochitl Gomez"
+                },
+                {
+                    id: "r7",
+                    title: "Thor: Amor y Trueno",
+                    image: "img/thorr.jpeg",
+                    price: 17.99,
+                    releaseYear: 2022,
+                    description: "Thor emprende un viaje diferente a todo lo que ha enfrentado: una búsqueda de la paz interior. Pero su retiro se ve interrumpido por un asesino galáctico conocido como Gorr el Carnicero de Dioses.",
+                    rating: 4,
+                    category: "Peliculas Estrenos",
+                    trailer: "https://www.youtube.com/embed/ZaD7iZR0-5w?si=6GX8Wt51XnUkAWFa",
+                    actors: "Chris Hemsworth, Natalie Portman, Christian Bale, Tessa Thompson, Russell Crowe"
+                },
+                {
+                    id: "r8",
+                    title: "Lightyear",
+                    image: "img/lig.jpg",
+                    price: 15.99,
+                    releaseYear: 2022,
+                    description: "La historia del origen definitiva de Buzz Lightyear, el héroe que inspiró el juguete, sigue al legendario Space Ranger después de que él y su comandante y tripulación quedan varados en un planeta hostil a 4.2 millones de años luz de la Tierra.",
+                    rating: 4,
+                    category: "Peliculas Estrenos",
+                    trailer: "https://www.youtube.com/embed/BwPL0Md_QFQ?si=Pbm2C0yfY7dp-RLF",
+                    actors: "Chris Evans, Keke Palmer, Peter Sohn, Taika Waititi, Dale Soules"
+                },
+                {
+                    id: "r9",
+                    title: "Minions: El Origen de Gru",
+                    image: "img/minions.jpg",
+                    price: 14.99,
+                    releaseYear: 2022,
+                    description: "En los años 70, Gru crece en los suburbios, es fanático de un grupo de supervillanos conocido como Vicious 6. Cuando los Vicious 6 expulsan a su líder, el legendario luchador Wild Knuckles, Gru participa en una entrevista para convertirse en su miembro más nuevo.",
+                    rating: 4,
+                    category: "Peliculas Estrenos",
+                    trailer: "https://www.youtube.com/embed/EgXQmSW16YY?si=1xryb7KTv9uWsh6x",
+                    actors: "Steve Carell, Pierre Coffin, Alan Arkin, Taraji P. Henson, Michelle Yeoh"
+                },
+                {
+                    id: "r10",
+                    title: "Jurassic World: Dominion",
+                    image: "img/dominion.jpeg",
+                    price: 18.99,
+                    releaseYear: 2022,
+                    description: "Cuatro años después de la destrucción de Isla Nublar, los dinosaurios ahora viven y cazan junto a los humanos en todo el mundo. Este frágil equilibrio remodelará el futuro y determinará, de una vez por todas, si los seres humanos seguirán siendo los depredadores dominantes.",
+                    rating: 3,
+                    category: "Peliculas Estrenos",
+                    trailer: "https://www.youtube.com/embed/9m9yRauMJIQ?si=wREhllrPyBrQiU8s",
+                    actors: "Chris Pratt, Bryce Dallas Howard, Laura Dern, Jeff Goldblum, Sam Neill"
+                },
+            ],
+            action: [
+                {
+                    id: "a1",
+                    title: "Mad Max: Furia en la Carretera",
+                    image: "img/mad.jpeg",
+                    price: 14.99,
+                    releaseYear: 2015,
+                    description: "En un mundo post-apocalíptico, Max Rockatansky se une a Imperator Furiosa para huir de un señor de la guerra y su ejército en una guerra de carretera de alta velocidad a través del desierto.",
+                    rating: 5,
+                    category: "Peliculas Accion",
+                    trailer: "https://www.youtube.com/embed/GvsFoGIuRX4?si=093sWw9A7U54V3sD",
+                    actors: "Tom Hardy, Charlize Theron, Nicholas Hoult, Hugh Keays-Byrne, Rosie Huntington-Whiteley"
+                },
+                {
+                    id: "a2",
+                    title: "John Wick",
+                    image: "img/jhon.jpg",
+                    price: 13.99,
+                    releaseYear: 2014,
+                    description: "Un ex-asesino a sueldo sale de su retiro para rastrear a los gángsters que mataron a su perro y le robaron su auto, los únicos recuerdos de su difunta esposa.",
+                    rating: 4,
+                    category: "Peliculas Accion",
+                    trailer: "https://www.youtube.com/embed/C0BMx-qxsP4?si=LIL4J4a8NFYE7szr",
+                    actors: "Keanu Reeves, Michael Nyqvist, Alfie Allen, Adrianne Palicki, Bridget Moynahan"
+                },
+                {
+                    id: "a3",
+                    title: "Misión: Imposible - Repercusión",
+                    image: "img/mision.jpeg",
+                    price: 15.99,
+                    releaseYear: 2018,
+                    description: "Ethan Hunt y su equipo de IMF, junto con algunos aliados familiares, corren contra el tiempo después de que una misión sale mal y deben enfrentar las consecuencias de sus acciones.",
+                    rating: 5,
+                    category: "Peliculas Accion",
+                    trailer: "https://www.youtube.com/embed/lB7jqyoOayU?si=yihEQCP1iF9EOCGA",
+                    actors: "Tom Cruise, Henry Cavill, Ving Rhames, Simon Pegg, Rebecca Ferguson"
+                },
+                {
+                    id: "a4",
+                    title: "Duro de Matar",
+                    image: "img/duro.jpg",
+                    price: 12.99,
+                    releaseYear: 1988,
+                    description: "Un oficial de policía de Nueva York intenta salvar a su esposa y a varios otros tomados como rehenes por terroristas alemanes durante una fiesta navideña en un rascacielos de Los Ángeles.",
+                    rating: 5,
+                    category: "Peliculas Accion",
+                    trailer: "https://www.youtube.com/embed/PVw40p8ZLkw?si=-SrXDkuXYq4BKwee",
+                    actors: "Bruce Willis, Alan Rickman, Bonnie Bedelia, Reginald VelJohnson, Paul Gleason"
+                },
+                {
+                    id: "a5",
+                    title: "El Caballero de la Noche",
+                    image: "img/caballero.jpg",
+                    price: 14.99,
+                    releaseYear: 2008,
+                    description: "Cuando la amenaza conocida como el Joker emerge de su misterioso pasado, causa estragos y caos en la gente de Gotham. El Caballero de la Noche debe aceptar una de las pruebas psicológicas y físicas más grandes.",
+                    rating: 5,
+                    category: "Peliculas Accion",
+                    trailer: "https://www.youtube.com/embed/dzQtWkpc2-c?si=iGRJz4z7jugVqENP",
+                    actors: "Christian Bale, Heath Ledger, Aaron Eckhart, Michael Caine, Maggie Gyllenhaal"
+                },
+                {
+                    id: "a6",
+                    title: "Gladiador",
+                    image: "img/gladiador.jpg",
+                    price: 13.99,
+                    releaseYear: 2000,
+                    description: "Un ex-general romano se propone vengarse del emperador corrupto que asesinó a su familia y lo envió a la esclavitud. Ahora debe luchar como gladiador para recuperar su honor y libertad.",
+                    rating: 5,
+                    category: "Peliculas Accion",
+                    trailer: "https://www.youtube.com/embed/P5ieIbInFpg?si=pulbnqcSo5boq-m5",
+                    actors: "Russell Crowe, Joaquin Phoenix, Connie Nielsen, Oliver Reed, Richard Harris"
+                },
+                {
+                    id: "a7",
+                    title: "Los Vengadores",
+                    image: "img/vengadores.jpg",
+                    price: 16.99,
+                    releaseYear: 2012,
+                    description: "Los superhéroes más poderosos de la Tierra deben unirse y aprender a luchar como un equipo si van a detener al malévolo Loki y su ejército alienígena de conquistar el mundo.",
+                    rating: 4,
+                    category: "Peliculas Accion",
+                    trailer: "https://www.youtube.com/embed/yNXfOOL8824?si=oFcBalUL5JUQYIEq",
+                    actors: "Robert Downey Jr., Chris Evans, Mark Ruffalo, Chris Hemsworth, Scarlett Johansson"
+                },
+                {
+                    id: "a8",
+                    title: "Terminator 2: El Juicio Final",
+                    image: "img/terminator.jpg",
+                    price: 13.99,
+                    releaseYear: 1991,
+                    description: "Un cyborg, idéntico al que falló en matar a Sarah Connor, debe ahora proteger a su hijo adolescente John Connor de un Terminator más avanzado y poderoso.",
+                    rating: 5,
+                    category: "Peliculas Accion",
+                    trailer: "https://www.youtube.com/embed/mVbYhayCdm0?si=7ismVOo5s9ngbN3w",
+                    actors: "Arnold Schwarzenegger, Linda Hamilton, Edward Furlong, Robert Patrick, Earl Boen"
+                },
+                {
+                    id: "a9",
+                    title: "Depredador",
+                    image: "img/depredador.jpg",
+                    price: 12.99,
+                    releaseYear: 1987,
+                    description: "Un equipo de comandos en una misión de rescate en la selva centroamericana se encuentra cazado por un guerrero extraterrestre casi invisible que los mata uno por uno.",
+                    rating: 4,
+                    category: "Peliculas Accion",
+                    trailer: "https://www.youtube.com/embed/NICzpXtD-A0?si=3Mpx-uVEDWcK2mEB",
+                    actors: "Arnold Schwarzenegger, Carl Weathers, Elpidia Carrillo, Bill Duke, Jesse Ventura"
+                },
+                {
+                    id: "a10",
+                    title: "Velocidad Máxima",
+                    image: "img/velocidad.jpg",
+                    price: 11.99,
+                    releaseYear: 1994,
+                    description: "Un joven oficial de policía debe evitar que una bomba explote a bordo de un autobús de la ciudad manteniendo su velocidad por encima de 50 mph, mientras un extorsionista observa cada movimiento.",
+                    rating: 4,
+                    category: "Peliculas Accion",
+                    trailer: "https://www.youtube.com/embed/rPBYogZu5Lk?si=N5EgioJHNuHLso6X",
+                    actors: "Keanu Reeves, Sandra Bullock, Dennis Hopper, Jeff Daniels, Joe Morton"
+                },
+            ],
+            scifi: [
+                {
+                    id: "s1",
+                    title: "Blade Runner 2049",
+                    image: "img/blade.jpg",
+                    price: 16.99,
+                    releaseYear: 2017,
+                    description: "Un joven blade runner descubre un secreto largamente enterrado que lo lleva a rastrear al ex-blade runner Rick Deckard, quien ha estado desaparecido durante treinta años en un futuro distópico.",
+                    rating: 5,
+                    category: "Peliculas Ciencia Ficcion",
+                    trailer: "https://www.youtube.com/embed/PkqHVGFAhbU?si=FuVt_nsR3zbxsDhj",
+                    actors: "Ryan Gosling, Harrison Ford, Ana de Armas, Sylvia Hoeks, Robin Wright"
+                },
+                {
+                    id: "s2",
+                    title: "Interestelar",
+                    image: "img/interestelar.jpg",
+                    price: 15.99,
+                    releaseYear: 2014,
+                    description: "Un equipo de exploradores viaja a través de un agujero de gusano en el espacio en un intento de asegurar la supervivencia de la humanidad cuando la Tierra se vuelve inhabitable.",
+                    rating: 5,
+                    category: "Peliculas Ciencia Ficcion",
+                    trailer: "https://www.youtube.com/embed/LYS2O1nl9iM?si=Pwchg4qCirZS-Tyc",
+                    actors: "Matthew McConaughey, Anne Hathaway, Jessica Chastain, Bill Irwin, Ellen Burstyn"
+                },
+                {
+                    id: "s3",
+                    title: "Matrix",
+                    image: "img/matrix.jpg",
+                    price: 13.99,
+                    releaseYear: 1999,
+                    description: "Un hacker informático aprende de misteriosos rebeldes sobre la verdadera naturaleza de su realidad y su papel en la guerra contra sus controladores en un mundo simulado por máquinas.",
+                    rating: 5,
+                    category: "Peliculas Ciencia Ficcion",
+                    trailer: "https://www.youtube.com/embed/OM0tSTEQCQA?si=jWIgPHHPvzGNcWNl",
+                    actors: "Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss, Hugo Weaving, Gloria Foster"
+                },
+                {
+                    id: "s4",
+                    title: "La Llegada",
+                    image: "img/llegada.jpg",
+                    price: 14.99,
+                    releaseYear: 2016,
+                    description: "Una lingüista trabaja con el ejército para comunicarse con formas de vida alienígenas después de que doce naves espaciales misteriosas aparecen alrededor del mundo, cambiando la historia humana.",
+                    rating: 4,
+                    category: "Peliculas Ciencia Ficcion",
+                    trailer: "https://www.youtube.com/embed/uWs5lsWXLbo?si=2yJUEfCoHGkg--8-",
+                    actors: "Amy Adams, Jeremy Renner, Forest Whitaker, Michael Stuhlbarg, Tzi Ma"
+                },
+                {
+                    id: "s5",
+                    title: "Ex Machina",
+                    image: "img/machina.jpg",
+                    price: 13.99,
+                    releaseYear: 2014,
+                    description: "Un joven programador es seleccionado para participar en un experimento revolucionario en inteligencia artificial evaluando las cualidades humanas de una androide altamente avanzada.",
+                    rating: 4,
+                    category: "Peliculas Ciencia Ficcion",
+                    trailer: "https://www.youtube.com/embed/qSwobe3uIII?si=btgbHhegXp6Rieer",
+                    actors: "Domhnall Gleeson, Alicia Vikander, Oscar Isaac, Sonoya Mizuno, Corey Johnson"
+                },
+                {
+                    id: "s6",
+                    title: "Alien: El Octavo Pasajero",
+                    image: "img/alien.jpg",
+                    price: 12.99,
+                    releaseYear: 1979,
+                    description: "La tripulación de una nave espacial comercial encuentra una forma de vida mortal después de investigar una transmisión misteriosa de origen desconocido en un planeta distante.",
+                    rating: 5,
+                    category: "Peliculas Ciencia Ficcion",
+                    trailer: "https://www.youtube.com/embed/Eu9ZFTXXEiw?si=7MONIa-umx0t5iWS",
+                    actors: "Sigourney Weaver, Tom Skerritt, Veronica Cartwright, Harry Dean Stanton, John Hurt"
+                },
+                {
+                    id: "s7",
+                    title: "2001: Una Odisea del Espacio",
+                    image: "img/2001.jpg",
+                    price: 14.99,
+                    releaseYear: 1968,
+                    description: "La humanidad encuentra un objeto misterioso enterrado bajo la superficie lunar y, con la ayuda de la inteligencia artificial HAL 9000, emprende una búsqueda para encontrar sus orígenes.",
+                    rating: 5,
+                    category: "Peliculas Ciencia Ficcion",
+                    trailer: "https://www.youtube.com/embed/oR_e9y-bka0?si=TsaLnY9fzqtOTHBZ",
+                    actors: "Keir Dullea, Gary Lockwood, William Sylvester, Daniel Richter, Leonard Rossiter"
+                },
+                {
+                    id: "s8",
+                    title: "Distrito 9",
+                    image: "img/distrito.jpg",
+                    price: 13.99,
+                    releaseYear: 2009,
+                    description: "Un agente del gobierno se infecta accidentalmente con un virus alienígena que lo transforma lentamente en una de las criaturas que está tratando de controlar en un campo de refugiados alienígenas.",
+                    rating: 4,
+                    category: "Peliculas Ciencia Ficcion",
+                    trailer: "https://www.youtube.com/embed/DyLUwOcR5pk?si=XoxqS1vpGuNuZF2u",
+                    actors: "Sharlto Copley, Jason Cope, Nathalie Boltt, Sylvaine Strike, Elizabeth Mkandawie"
+                },
+                {
+                    id: "s9",
+                    title: "Minority Report",
+                    image: "img/mino.jpg",
+                    price: 13.99,
+                    releaseYear: 2002,
+                    description: "En un futuro donde un departamento de policía especial es capaz de arrestar asesinos antes de que cometan sus crímenes, un oficial de esa división es acusado de un futuro asesinato.",
+                    rating: 4,
+                    category: "Peliculas Ciencia Ficcion",
+                    trailer: "https://www.youtube.com/embed/lG7DGMgfOb8?si=dWM-esidor69CKV2",
+                    actors: "Tom Cruise, Colin Farrell, Samantha Morton, Max von Sydow, Lois Smith"
+                },
+                {
+                    id: "s10",
+                    title: "Elysium",
+                    image: "img/ely.jpg",
+                    price: 14.99,
+                    releaseYear: 2013,
+                    description: "En el año 2154, los muy ricos viven en una estación espacial hecha por el hombre, mientras que el resto de la población reside en una Tierra arruinada. Un hombre emprende una misión que podría traer igualdad a estos mundos polarizados.",
+                    rating: 4,
+                    category: "Peliculas Ciencia Ficcion",
+                    trailer: "https://www.youtube.com/embed/oIBtePb-dGY?si=-KyauBiEZkpFwWbx",
+                    actors: "Matt Damon, Jodie Foster, Sharlto Copley, Alice Braga, Diego Luna"
+                },
+            ],
+            horror: [
+                {
+                    id: "h1",
+                    title: "Hereditary",
+                    image: "img/he.jpg",
+                    price: 15.99,
+                    releaseYear: 2018,
+                    description: "Una familia en duelo se ve atormentada por eventos trágicos y perturbadores después de la muerte de su abuela, revelando secretos familiares oscuros y fuerzas sobrenaturales.",
+                    rating: 4,
+                    category: "Peliculas Terror",
+                    trailer: "https://www.youtube.com/embed/yiPvtoNMRa4?si=MXS4hZ7LWcVzxPFV",
+                    actors: "Toni Collette, Alex Wolff, Milly Shapiro, Ann Dowd, Gabriel Byrne"
+                },
+                {
+                    id: "h2",
+                    title: "El Conjuro",
+                    image: "img/conjuro.jpg",
+                    price: 14.99,
+                    releaseYear: 2013,
+                    description: "Los investigadores paranormales Ed y Lorraine Warren trabajan para ayudar a una familia aterrorizada por una presencia oscura en su granja, enfrentando uno de los casos más malevolentes de sus carreras.",
+                    rating: 4,
+                    category: "Peliculas Terror",
+                    trailer: "https://www.youtube.com/embed/_zU1gLWGnpg?si=SyHvS_jZMndV_fl7",
+                    actors: "Patrick Wilson, Vera Farmiga, Lili Taylor, Ron Livingston, Shanley Caswell"
+                },
+                {
+                    id: "h3",
+                    title: "¡Huye!",
+                    image: "img/huye.jpg",
+                    price: 13.99,
+                    releaseYear: 2017,
+                    description: "Un joven afroamericano visita la propiedad rural de la familia de su novia blanca, donde sus sospechas iniciales sobre el comportamiento de la familia se convierten en una pesadilla de horror racial.",
+                    rating: 5,
+                    category: "Peliculas Terror",
+                    trailer: "https://www.youtube.com/embed/xGhKr2uNkI4?si=SR1qcjN2Ey_uuJOq",
+                    actors: "Daniel Kaluuya, Allison Williams, Catherine Keener, Bradley Whitford, Caleb Landry Jones"
+                },
+                {
+                    id: "h4",
+                    title: "Un Lugar en Silencio",
+                    image: "img/lugar.jpg",
+                    price: 14.99,
+                    releaseYear: 2018,
+                    description: "En un mundo post-apocalíptico, una familia es forzada a vivir en silencio mientras se esconde de monstruos con audición ultra-aguda que cazan por sonido.",
+                    rating: 4,
+                    category: "Peliculas Terror",
+                    trailer: "https://www.youtube.com/embed/IrjEyOkq0To?si=pni0Epf0BxWDmxkj",
+                    actors: "John Krasinski, Emily Blunt, Millicent Simmonds, Noah Jupe, Cade Woodward"
+                },
+                {
+                    id: "h5",
+                    title: "El Babadook",
+                    image: "img/bada.jpg",
+                    price: 12.99,
+                    releaseYear: 2014,
+                    description: "Una madre viuda se ve plagada por la violenta muerte de su esposo y el comportamiento errático de su hijo de 6 años, mientras una presencia siniestra amenaza con destruir sus vidas.",
+                    rating: 4,
+                    category: "Peliculas Terror",
+                    trailer: "https://www.youtube.com/embed/k5WQZzDRVtw?si=NhCyVy7RgeujuplO",
+                    actors: "Essie Davis, Noah Wiseman, Daniel Henshall, Hayley McElhinney, Barbara West"
+                },
+                {
+                    id: "h6",
+                    title: "It: Eso",
+                    image: "img/it.jpg",
+                    price: 15.99,
+                    releaseYear: 2017,
+                    description: "En el verano de 1989, un grupo de niños marginados en Derry, Maine, se unen para conquistar sus mayores miedos cuando descubren que pueden tener que enfrentar a un payaso malévolo y asesino conocido como Pennywise.",
+                    rating: 4,
+                    category: "Peliculas Terror",
+                    trailer: "https://www.youtube.com/embed/xKJmEC5ieOk?si=LLjemWa9Ueco5xAv",
+                    actors: "Jaeden Martell, Jeremy Ray Taylor, Sophia Lillis, Finn Wolfhard, Chosen Jacobs"
+                },
+                {
+                    id: "h7",
+                    title: "El Exorcista",
+                    image: "img/ex.jpg",
+                    price: 13.99,
+                    releaseYear: 1973,
+                    description: "Cuando una niña de 12 años es poseída por una entidad misteriosa, su madre busca la ayuda de dos sacerdotes para salvar a su hija en una batalla épica entre el bien y el mal.",
+                    rating: 5,
+                    category: "Peliculas Terror",
+                    trailer: "https://www.youtube.com/embed/LlTl5PoS1cE?si=-12Tq2MWTnck5daz",
+                    actors: "Ellen Burstyn, Max von Sydow, Lee J. Cobb, Kitty Winn, Jack MacGowran"
+                },
+                {
+                    id: "h8",
+                    title: "Halloween",
+                    image: "img/hallo.jpg",
+                    price: 12.99,
+                    releaseYear: 1978,
+                    description: "Quince años después de asesinar a su hermana en Halloween, Michael Myers escapa de un hospital psiquiátrico y regresa a su ciudad natal para matar de nuevo en la noche más terrorífica del año.",
+                    rating: 4,
+                    category: "Peliculas Terror",
+                    trailer: "https://www.youtube.com/embed/ek1ePFp-nBI?si=9GmN16QgJN0sSBgS",
+                    actors: "Donald Pleasence, Jamie Lee Curtis, Nancy Kyes, P.J. Soles, Charles Cyphers"
+                },
+                {
+                    id: "h9",
+                    title: "El Resplandor",
+                    image: "img/res.jpeg",
+                    price: 14.99,
+                    releaseYear: 1980,
+                    description: "Una familia se dirige a un hotel aislado durante el invierno donde una presencia siniestra influye en el padre hacia la violencia, mientras su hijo psíquico ve horribles premoniciones del pasado y futuro.",
+                    rating: 5,
+                    category: "Peliculas Terror",
+                    trailer: "https://www.youtube.com/embed/IiSjPcRWjYA?si=5u6zPlZHtOgmlT6F",
+                    actors: "Jack Nicholson, Shelley Duvall, Danny Lloyd, Scatman Crothers, Barry Nelson"
+                },
+                {
+                    id: "h10",
+                    title: "Midsommar",
+                    image: "img/mid.jpg",
+                    price: 15.99,
+                    releaseYear: 2019,
+                    description: "Una pareja en crisis viaja a Suecia para visitar el festival de verano de una comuna rural, pero lo que comienza como unas vacaciones idílicas se convierte rápidamente en una pesadilla competitiva y violenta.",
+                    rating: 4,
+                    category: "Peliculas Terror",
+                    trailer: "https://www.youtube.com/embed/LEIgvmE4nX8?si=4jDRL-Q1BtTHigcP",
+                    actors: "Florence Pugh, Jack Reynor, William Jackson Harper, Vilhelm Blomgren, Will Poulter"
+                },
+            ],
+            comedy: [
+                {
+                    id: "c1",
+                    title: "Parásitos",
+                    image: "img/parasitos.jpg",
+                    price: 16.99,
+                    releaseYear: 2019,
+                    description: "La codicia y la discriminación de clases amenazan la relación simbiótica recién formada entre la adinerada familia Park y el clan Kim, empobrecido pero ingenioso, en esta sátira social surcoreana.",
+                    rating: 5,
+                    category: "Peliculas Comedia",
+                    trailer: "https://www.youtube.com/embed/90dWVETAdtI?si=hDeu61gKgbFnClG4",
+                    actors: "Song Kang-ho, Lee Sun-kyun, Cho Yeo-jeong, Choi Woo-shik, Park So-dam"
+                },
+                {
+                    id: "c2",
+                    title: "El Gran Hotel Budapest",
+                    image: "img/hotel.jpg",
+                    price: 14.99,
+                    releaseYear: 2014,
+                    description: "Las aventuras de Gustave H, un conserje legendario en un famoso hotel europeo, y Zero Moustafa, el protegido que se convierte en su amigo más confiable durante la guerra.",
+                    rating: 4,
+                    category: "Peliculas Comedia",
+                    trailer: "https://www.youtube.com/embed/QXMGdqo03Yw?si=f4g0yZ8Wq5zabCdF",
+                    actors: "Ralph Fiennes, F. Murray Abraham, Mathieu Amalric, Adrien Brody, Willem Dafoe"
+                },
+                {
+                    id: "c3",
+                    title: "Puñales por la Espalda",
+                    image: "img/espalda.jpg",
+                    price: 15.99,
+                    releaseYear: 2019,
+                    description: "Un detective investiga la muerte del patriarca de una familia disfuncional y excéntrica en una mansión llena de secretos, mentiras y motivos para el asesinato.",
+                    rating: 4,
+                    category: "Peliculas Comedia",
+                    trailer: "https://www.youtube.com/embed/dzt1BPkm97I?si=SS0M2CCci98qLDN1",
+                    actors: "Daniel Craig, Chris Evans, Ana de Armas, Jamie Lee Curtis, Michael Shannon"
+                },
+                {
+                    id: "c4",
+                    title: "Jojo Rabbit",
+                    image: "img/jojo.jpg",
+                    price: 14.99,
+                    releaseYear: 2019,
+                    description: "Un niño alemán en la era nazi, cuyo único escape es a través de su amigo imaginario Adolf Hitler, descubre que su madre está escondiendo a una niña judía en su ático.",
+                    rating: 4,
+                    category: "Peliculas Comedia",
+                    trailer: "https://www.youtube.com/embed/HwixoNNy_8Y?si=CymVK9Rw5XzdxC3E",
+                    actors: "Roman Griffin Davis, Thomasin McKenzie, Taika Waititi, Rebel Wilson, Stephen Merchant"
+                },
+                {
+                    id: "c5",
+                    title: "El Menú",
+                    image: "img/menu.jpg",
+                    price: 15.99,
+                    releaseYear: 2022,
+                    description: "Una joven pareja viaja a una isla remota para comer en un restaurante exclusivo donde el chef ha preparado un menú lujoso, con algunas sorpresas impactantes y mortales.",
+                    rating: 4,
+                    category: "Peliculas Comedia",
+                    trailer: "https://www.youtube.com/embed/e0n8hdMh3-k?si=PSSfFh17aIOLn7zy",
+                    actors: "Anya Taylor-Joy, Ralph Fiennes, Nicholas Hoult, Hong Chau, Janet McTeer"
+                },
+                {
+                    id: "c6",
+                    title: "La Forma del Agua",
+                    image: "img/agua.jpg",
+                    price: 14.99,
+                    releaseYear: 2017,
+                    description: "En un laboratorio gubernamental de alta seguridad en 1962, una empleada solitaria forma una conexión única con una criatura anfibia que está siendo mantenida en cautiverio.",
+                    rating: 5,
+                    category: "Peliculas Comedia",
+                    trailer: "https://www.youtube.com/embed/S9812XOtAU4?si=q43WsYlqcWl8vkMx",
+                    actors: "Sally Hawkins, Michael Shannon, Richard Jenkins, Doug Jones, Michael Stuhlbarg"
+                },
+                {
+                    id: "c7",
+                    title: "Birdman",
+                    image: "img/bird.jpeg",
+                    price: 13.99,
+                    releaseYear: 2014,
+                    description: "Un actor lavado, famoso por interpretar a un superhéroe icónico, lucha por montar una obra de Broadway mientras batalla con su ego, su familia y su carrera en declive.",
+                    rating: 4,
+                    category: "Peliculas Comedia",
+                    trailer: "https://www.youtube.com/embed/4ZLvcbfEOjA?si=BErGSOdjDSUUPw-5",
+                    actors: "Michael Keaton, Emma Stone, Edward Norton, Andrea Riseborough, Amy Ryan"
+                },
+                {
+                    id: "c8",
+                    title: "La La Land",
+                    image: "img/la.jpg",
+                    price: 14.99,
+                    releaseYear: 2016,
+                    description: "Una aspirante a actriz y un músico de jazz dedicado luchan por hacer realidad sus sueños en una ciudad conocida por destruir esperanzas y romper corazones.",
+                    rating: 4,
+                    category: "Peliculas Comedia",
+                    trailer: "https://www.youtube.com/embed/45s24h98iOc?si=t1XHXYAVOm7LzXC6",
+                    actors: "Ryan Gosling, Emma Stone, John Legend, Rosemarie DeWitt, Finn Wittrock"
+                },
+                {
+                    id: "c9",
+                    title: "Tres Anuncios por un Crimen",
+                    image: "img/anuncio.jpg",
+                    price: 13.99,
+                    releaseYear: 2017,
+                    description: "Una madre afligida desafía a las autoridades locales para resolver el asesinato de su hija cuando no logran atrapar al culpable, alquilando tres vallas publicitarias para llamar la atención.",
+                    rating: 4,
+                    category: "Peliculas Comedia",
+                    trailer: "https://www.youtube.com/embed/uLr4jog9EX8?si=BZAndc22mLz6KQgN",
+                    actors: "Frances McDormand, Woody Harrelson, Sam Rockwell, Abbie Cornish, Lucas Hedges"
+                },
+                {
+                    id: "c10",
+                    title: "El Lobo de Wall Street",
+                    image: "img/lobo.jpg",
+                    price: 15.99,
+                    releaseYear: 2013,
+                    description: "Basada en la historia real de Jordan Belfort, desde su ascenso a un rico corredor de bolsa viviendo la gran vida hasta su caída que involucra crimen, corrupción y el gobierno federal.",
+                    rating: 4,
+                    category: "Peliculas Comedia",
+                    trailer: "https://www.youtube.com/embed/DEMZSa0esCU?si=puOvBz2VG3FBs8Af",
+                    actors: "Leonardo DiCaprio, Jonah Hill, Margot Robbie, Matthew McConaughey, Kyle Chandler"
+                },
+            ]
+        };
+
+        // Variables globales
+        let cartItems = [];
+        let currentCategory = 'releases';
+        let currentUser = null;
+        let currentCarouselIndex = 0;
+        const carouselSlides = document.querySelectorAll('.carousel-slide');
+        let searchTimeout;
+        let isSearching = false;
+        let purchaseHistory = JSON.parse(localStorage.getItem('purchaseHistory')) || [];
+
+        // Elementos del DOM
+        const moviesContainer = document.getElementById('movies-container');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const cartButton = document.getElementById('cart-button');
+        const cartCount = document.getElementById('cart-count');
+        const cartSidebar = document.getElementById('cart-sidebar');
+        const closeCartButton = document.querySelector('.close-cart');
+        const cartEmpty = document.getElementById('cart-empty');
+        const cartItems_el = document.getElementById('cart-items');
+        const totalAmount = document.getElementById('total-amount');
+        const customerNameInput = document.getElementById('customer-name');
+        const checkoutButton = document.getElementById('checkout-button');
+        const movieModal = document.getElementById('movie-modal');
+        const closeButton = document.querySelector('.close-button');
+        const modalImage = document.getElementById('modal-image');
+        const modalTitle = document.getElementById('modal-title');
+        const modalYear = document.getElementById('modal-year');
+        const modalDescription = document.getElementById('modal-description');
+        const modalRating = document.getElementById('modal-rating');
+        const modalPrice = document.getElementById('modal-price');
+        const modalCategory = document.getElementById('modal-category');
+        const modalActors = document.getElementById('modal-actors');
+        const modalAddToCart = document.getElementById('modal-add-to-cart');
+        const modalTrailerButton = document.getElementById('modal-trailer-button');
+        const overlay = document.getElementById('overlay');
+        
+        // Elementos de búsqueda
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
+        
+        // Elementos de autenticación
+        const userButton = document.getElementById('user-button');
+        const userText = document.getElementById('user-text');
+        const authModal = document.getElementById('auth-modal');
+        const authTabs = document.querySelectorAll('.auth-tab');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        
+        // Elementos del panel de administración
+        const adminButton = document.getElementById('admin-button');
+        const adminPanel = document.getElementById('admin-panel');
+        const movieForm = document.getElementById('movie-form');
+        const adminTabs = document.querySelectorAll('.admin-tab');
+        const addMovieTab = document.getElementById('add-movie-tab');
+        const manageMoviesTab = document.getElementById('manage-movies-tab');
+        const moviesList = document.getElementById('movies-list');
+
+        // Elementos del historial de compras
+        const historyButton = document.getElementById('history-button');
+        const purchaseHistoryPanel = document.getElementById('purchase-history');
+        const closeHistoryButton = document.getElementById('close-history');
+        const purchaseSearchInput = document.getElementById('purchase-search-input');
+        const purchaseList = document.getElementById('purchase-list');
+
+        // Elementos de la intro
+        const introScreen = document.getElementById('intro-screen');
+        const loadingBar = document.getElementById('loading-bar');
+
+        // Elementos del modal de mensaje de administrador
+        const adminMessageModal = document.getElementById('admin-message-modal');
+        const adminMessageOk = document.getElementById('admin-message-ok');
+
+        // Inicializar la aplicación
+        function init() {
+            // Mostrar la intro primero
+            showIntro();
+            
+            // Mostrar películas de la categoría actual
+            renderMovies(currentCategory);
+            
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Inicializar carrusel
+            initCarousel();
+            
+            // Renderizar lista de películas en admin
+            renderMoviesList();
+        }
+
+        // Mostrar la intro
+        function showIntro() {
+            introScreen.style.display = 'flex';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 2;
+                loadingBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        introScreen.style.display = 'none';
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        // Configurar todos los event listeners
+        function setupEventListeners() {
+            // Eventos de pestañas
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const category = button.dataset.category;
+                    currentCategory = category;
+                    
+                    // Actualizar clases activas
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // Limpiar búsqueda
+                    searchInput.value = '';
+                    searchResults.style.display = 'none';
+                    isSearching = false;
+                    
+                    // Renderizar películas de la categoría seleccionada
+                    renderMovies(category);
+                });
+            });
+
+            // Eventos de búsqueda
+            searchInput.addEventListener('input', handleSearch);
+            searchInput.addEventListener('focus', () => {
+                if (searchInput.value.trim() !== '') {
+                    searchResults.style.display = 'block';
+                }
+            });
+
+            // Cerrar resultados de búsqueda al hacer clic fuera
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.search-container')) {
+                    searchResults.style.display = 'none';
+                }
+            });
+
+            // Eventos de pestañas de administración
+            adminTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.adminTab;
+                    switchAdminTab(tabName);
+                });
+            });
+            
+            // Eventos del carrito
+            cartButton.addEventListener('click', toggleCart);
+            closeCartButton.addEventListener('click', toggleCart);
+            
+            // Eventos de checkout
+            customerNameInput.addEventListener('input', validateCheckout);
+            checkoutButton.addEventListener('click', handleCheckout);
+            
+            // Eventos del modal
+            closeButton.addEventListener('click', closeModal);
+            overlay.addEventListener('click', () => {
+                closeModal();
+                closeCart();
+                closeAuthModal();
+                adminPanel.style.display = 'none';
+                purchaseHistoryPanel.style.display = 'none';
+                adminMessageModal.style.display = 'none';
+            });
+            
+            // Eventos de autenticación
+            userButton.addEventListener('click', toggleAuthModal);
+            authTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    switchAuthTab(tabName);
+                });
+            });
+            
+            // Evento del botón de administración
+            adminButton.addEventListener('click', function() {
+                showAdminMessage();
+            });
+
+            // Evento del botón de historial
+            historyButton.addEventListener('click', function() {
+                if (!currentUser) {
+                    alert('Debes iniciar sesión para ver tu historial de compras');
+                    return;
+                }
+                togglePurchaseHistory();
+            });
+
+            // Evento para cerrar historial
+            closeHistoryButton.addEventListener('click', function() {
+                purchaseHistoryPanel.style.display = 'none';
+            });
+
+            // Evento de búsqueda en historial
+            purchaseSearchInput.addEventListener('input', function() {
+                if (!currentUser) {
+                    return;
+                }
+                renderPurchaseHistory();
+            });
+
+            // Evento del modal de mensaje de administrador
+            adminMessageOk.addEventListener('click', function() {
+                adminMessageModal.style.display = 'none';
+                overlay.style.display = 'none';
+                
+                // Después de cerrar el mensaje, pedir contraseña
+                setTimeout(() => {
+                    const password = prompt('Ingrese la contraseña de administrador:');
+                    if (password === 'jhon') {
+                        adminPanel.style.display = 'block';
+                        overlay.style.display = 'block';
+                        renderMoviesList();
+                    } else if (password !== null) {
+                        alert('Contraseña incorrecta');
+                    }
+                }, 300);
+            });
+
+            // Evento del formulario de películas
+            movieForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                addNewMovie();
+            });
+        }
+
+        // Mostrar mensaje de administrador
+        function showAdminMessage() {
+            adminMessageModal.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        // Mostrar/ocultar historial de compras
+        function togglePurchaseHistory() {
+            if (purchaseHistoryPanel.style.display === 'block') {
+                purchaseHistoryPanel.style.display = 'none';
+            } else {
+                purchaseHistoryPanel.style.display = 'block';
+                renderPurchaseHistory();
+            }
+        }
+
+        // Renderizar historial de compras
+        function renderPurchaseHistory() {
+            if (!currentUser) {
+                purchaseList.innerHTML = '<p style="text-align: center; color: white;">Debes iniciar sesión para ver tu historial</p>';
+                return;
+            }
+
+            const searchQuery = purchaseSearchInput.value.trim().toLowerCase();
+            
+            // Solo mostrar compras del usuario actual
+            let userPurchases = purchaseHistory.filter(purchase => 
+                purchase.customerName.toLowerCase() === currentUser.username.toLowerCase()
+            );
+
+            // Si hay búsqueda, filtrar solo si coincide exactamente con el usuario actual
+            if (searchQuery && searchQuery !== currentUser.username.toLowerCase()) {
+                userPurchases = [];
+            }
+
+            purchaseList.innerHTML = '';
+
+            if (userPurchases.length === 0) {
+                purchaseList.innerHTML = '<p style="text-align: center; color: white;">No tienes compras registradas</p>';
+                return;
+            }
+
+            userPurchases.forEach(purchase => {
+                const purchaseItem = document.createElement('div');
+                purchaseItem.className = 'purchase-item';
+                
+                const movieTitles = purchase.items.map(item => item.title).join(', ');
+                
+                purchaseItem.innerHTML = `
+                    <div class="purchase-date">${purchase.date}</div>
+                    <div class="purchase-movies">Películas: ${movieTitles}</div>
+                    <div class="purchase-total">Total: $${purchase.total.toFixed(2)}</div>
+                `;
+                
+                purchaseList.appendChild(purchaseItem);
+            });
+        }
+
+        // Manejar búsqueda
+        function handleSearch(e) {
+            const query = e.target.value.trim().toLowerCase();
+            
+            // Limpiar timeout anterior
+            clearTimeout(searchTimeout);
+            
+            if (query === '') {
+                searchResults.style.display = 'none';
+                if (isSearching) {
+                    isSearching = false;
+                    renderMovies(currentCategory);
+                }
+                return;
+            }
+            
+            // Debounce la búsqueda
+            searchTimeout = setTimeout(() => {
+                performSearch(query);
+            }, 300);
+        }
+
+        // Realizar búsqueda
+        function performSearch(query) {
+            const allMovies = getAllMovies();
+            const filteredMovies = allMovies.filter(movie => 
+                movie.title.toLowerCase().includes(query) ||
+                movie.description.toLowerCase().includes(query) ||
+                movie.category.toLowerCase().includes(query) ||
+                movie.actors.toLowerCase().includes(query)
+            );
+            
+            displaySearchResults(filteredMovies, query);
+            
+            // Si hay resultados, mostrar en el contenedor principal
+            if (filteredMovies.length > 0) {
+                isSearching = true;
+                renderSearchMovies(filteredMovies);
+            }
+        }
+
+        // Obtener todas las películas
+        function getAllMovies() {
+            const allMovies = [];
+            Object.keys(movieData).forEach(category => {
+                movieData[category].forEach(movie => {
+                    allMovies.push({...movie, categoryKey: category});
+                });
+            });
+            return allMovies;
+        }
+
+        // Mostrar resultados de búsqueda en dropdown
+        function displaySearchResults(movies, query) {
+            searchResults.innerHTML = '';
+            
+            if (movies.length === 0) {
+                searchResults.innerHTML = '<div class="no-results">No se encontraron películas</div>';
+            } else {
+                const maxResults = Math.min(movies.length, 5); // Mostrar máximo 5 resultados
+                for (let i = 0; i < maxResults; i++) {
+                    const movie = movies[i];
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    
+                    resultItem.innerHTML = `
+                        <img src="${movie.image}" alt="${movie.title}" class="search-result-image">
+                        <div class="search-result-info">
+                            <div class="search-result-title">${movie.title}</div>
+                            <div class="search-result-category">${movie.category}</div>
+                        </div>
+                    `;
+                    
+                    resultItem.addEventListener('click', () => {
+                        openMovieModal(movie);
+                        searchResults.style.display = 'none';
+                    });
+                    
+                    searchResults.appendChild(resultItem);
+                }
+                
+                if (movies.length > 5) {
+                    const moreResults = document.createElement('div');
+                    moreResults.className = 'search-result-item';
+                    moreResults.style.fontStyle = 'italic';
+                    moreResults.style.color = '#8b5cf6';
+                    moreResults.innerHTML = `<div class="search-result-info"><div class="search-result-title">Ver ${movies.length - 5} resultados más...</div></div>`;
+                    searchResults.appendChild(moreResults);
+                }
+            }
+            
+            searchResults.style.display = 'block';
+        }
+
+        // Renderizar películas de búsqueda en el contenedor principal
+        function renderSearchMovies(movies) {
+            moviesContainer.innerHTML = '';
+            
+            if (movies.length === 0) {
+                moviesContainer.innerHTML = '<div style="text-align: center; color: white; font-size: 1.2rem; padding: 40px;">No se encontraron películas</div>';
+                return;
+            }
+            
+            movies.forEach(movie => {
+                const movieCard = document.createElement('div');
+                movieCard.className = 'movie-card';
+                
+                // Crear estrellas para la calificación
+                const stars = Array(5).fill(0).map((_, i) => 
+                    `<span class="star ${i < movie.rating ? 'filled' : ''}">★</span>`
+                ).join('');
+                
+                movieCard.innerHTML = `
+                    <div class="movie-image">
+                        <img src="${movie.image}" alt="${movie.title}">
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="rating">${stars}</div>
+                        <p class="price">$${movie.price.toFixed(2)}</p>
+                        <button class="add-to-cart-button">Añadir al Carrito</button>
+                    </div>
+                `;
+                
+                // Evento para abrir el modal
+                const movieImage = movieCard.querySelector('.movie-image');
+                movieImage.addEventListener('click', () => {
+                    openMovieModal(movie);
+                });
+                
+                // Evento para añadir al carrito
+                const addToCartButton = movieCard.querySelector('.add-to-cart-button');
+                addToCartButton.addEventListener('click', () => {
+                    addToCart(movie);
+                });
+                
+                moviesContainer.appendChild(movieCard);
+            });
+        }
+
+        // Cambiar entre tabs de administración
+        function switchAdminTab(tabName) {
+            // Actualizar clases activas de tabs
+            adminTabs.forEach(tab => {
+                if (tab.dataset.adminTab === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Mostrar contenido correspondiente
+            if (tabName === 'add') {
+                addMovieTab.classList.add('active');
+                manageMoviesTab.classList.remove('active');
+            } else {
+                addMovieTab.classList.remove('active');
+                manageMoviesTab.classList.add('active');
+                renderMoviesList();
+            }
+        }
+
+        // Añadir nueva película
+        function addNewMovie() {
+            const title = document.getElementById('movie-title').value;
+            const description = document.getElementById('movie-description').value;
+            const actors = document.getElementById('movie-actors').value;
+            const price = parseFloat(document.getElementById('movie-price').value);
+            const year = parseInt(document.getElementById('movie-year').value);
+            const category = document.getElementById('movie-category').value;
+            const rating = parseInt(document.getElementById('movie-rating').value);
+            const trailerUrl = document.getElementById('movie-trailer-url').value;
+            
+            // Crear ID único
+            const movieId = category.charAt(0) + Date.now();
+            
+            // Crear objeto de película
+            const newMovie = {
+                id: movieId,
+                title: title,
+                image: "/placeholder.svg?height=400&width=300",
+                price: price,
+                releaseYear: year,
+                description: description,
+                rating: rating,
+                category: getCategoryLabel(category),
+                trailer: trailerUrl || "",
+                actors: actors
+            };
+            
+            // Añadir a la categoría correspondiente
+            movieData[category].push(newMovie);
+            
+            // Actualizar UI
+            if (currentCategory === category) {
+                renderMovies(category);
+            }
+            renderMoviesList();
+            
+            // Limpiar formulario
+            movieForm.reset();
+            
+            alert('Película añadida con éxito!');
+        }
+
+        // Obtener etiqueta de categoría
+        function getCategoryLabel(category) {
+            const labels = {
+                'releases': 'Peliculas Estrenos',
+                'action': 'Peliculas Accion',
+                'scifi': 'Peliculas Ciencia Ficcion',
+                'horror': 'Peliculas Terror',
+                'comedy': 'Peliculas Comedia'
+            };
+            return labels[category] || category;
+        }
+
+        // Renderizar lista de películas en admin
+        function renderMoviesList() {
+            moviesList.innerHTML = '';
+            
+            // Obtener todas las películas de todas las categorías
+            const allMovies = [];
+            Object.keys(movieData).forEach(category => {
+                movieData[category].forEach(movie => {
+                    allMovies.push({...movie, categoryKey: category});
+                });
+            });
+            
+            allMovies.forEach(movie => {
+                const movieItem = document.createElement('div');
+                movieItem.className = 'movie-item';
+                
+                movieItem.innerHTML = `
+                    <div class="movie-item-image">
+                        <img src="${movie.image}" alt="${movie.title}">
+                    </div>
+                    <div class="movie-item-info">
+                        <div class="movie-item-title">${movie.title}</div>
+                        <div class="movie-item-category">${movie.category}</div>
+                    </div>
+                    <div class="movie-item-actions">
+                        <button class="edit-button" onclick="editMovie('${movie.id}', '${movie.categoryKey}')">Editar</button>
+                        <button class="delete-button" onclick="deleteMovie('${movie.id}', '${movie.categoryKey}')">Eliminar</button>
+                    </div>
+                `;
+                
+                moviesList.appendChild(movieItem);
+            });
+        }
+
+        // Eliminar película
+        function deleteMovie(movieId, categoryKey) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta película?')) {
+                // Encontrar y eliminar la película
+                const movieIndex = movieData[categoryKey].findIndex(movie => movie.id === movieId);
+                if (movieIndex !== -1) {
+                    movieData[categoryKey].splice(movieIndex, 1);
+                    
+                    // Actualizar UI
+                    if (currentCategory === categoryKey) {
+                        renderMovies(categoryKey);
+                    }
+                    renderMoviesList();
+                    
+                    alert('Película eliminada con éxito!');
+                }
+            }
+        }
+
+        // Editar película (funcionalidad básica)
+        function editMovie(movieId, categoryKey) {
+            const movie = movieData[categoryKey].find(m => m.id === movieId);
+            if (movie) {
+                alert(`Funcionalidad de edición para "${movie.title}" será implementada próximamente.`);
+            }
+        }
+
+        // Inicializar carrusel
+        function initCarousel() {
+            const prevButton = document.querySelector('.carousel-prev');
+            const nextButton = document.querySelector('.carousel-next');
+            
+            prevButton.addEventListener('click', () => {
+                currentCarouselIndex = (currentCarouselIndex - 1 + carouselSlides.length) % carouselSlides.length;
+                updateCarousel();
+            });
+            
+            nextButton.addEventListener('click', () => {
+                currentCarouselIndex = (currentCarouselIndex + 1) % carouselSlides.length;
+                updateCarousel();
+            });
+            
+            // Auto-advance carousel
+            setInterval(() => {
+                currentCarouselIndex = (currentCarouselIndex + 1) % carouselSlides.length;
+                updateCarousel();
+            }, 4000);
+        }
+
+        // Actualizar carrusel
+        function updateCarousel() {
+            carouselSlides.forEach((slide, index) => {
+                if (index === currentCarouselIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+        }
+
+        // Renderizar películas de una categoría
+        function renderMovies(category) {
+            moviesContainer.innerHTML = '';
+            
+            const movies = movieData[category] || [];
+            
+            movies.forEach(movie => {
+                const movieCard = document.createElement('div');
+                movieCard.className = 'movie-card';
+                
+                // Crear estrellas para la calificación
+                const stars = Array(5).fill(0).map((_, i) => 
+                    `<span class="star ${i < movie.rating ? 'filled' : ''}">★</span>`
+                ).join('');
+                
+                movieCard.innerHTML = `
+                    <div class="movie-image">
+                        <img src="${movie.image}" alt="${movie.title}">
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="rating">${stars}</div>
+                        <p class="price">$${movie.price.toFixed(2)}</p>
+                        <button class="add-to-cart-button">Añadir al Carrito</button>
+                    </div>
+                `;
+                
+                // Evento para abrir el modal
+                const movieImage = movieCard.querySelector('.movie-image');
+                movieImage.addEventListener('click', () => {
+                    openMovieModal(movie);
+                });
+                
+                // Evento para añadir al carrito
+                const addToCartButton = movieCard.querySelector('.add-to-cart-button');
+                addToCartButton.addEventListener('click', () => {
+                    addToCart(movie);
+                });
+                
+                moviesContainer.appendChild(movieCard);
+            });
+        }
+
+        // Abrir modal con detalles de la película
+        function openMovieModal(movie) {
+            modalImage.src = movie.image;
+            modalImage.alt = movie.title;
+            modalTitle.textContent = movie.title;
+            modalYear.textContent = `Lanzado en ${movie.releaseYear}`;
+            modalDescription.textContent = movie.description;
+            
+            // Crear estrellas para la calificación
+            modalRating.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const star = document.createElement('span');
+                star.className = `star ${i < movie.rating ? 'filled' : ''}`;
+                star.textContent = '★';
+                modalRating.appendChild(star);
+            }
+            
+            modalPrice.textContent = `$${movie.price.toFixed(2)}`;
+            modalCategory.textContent = `Categoría: ${movie.category}`;
+            
+            // Mostrar actores
+            modalActors.textContent = movie.actors || 'Información de actores no disponible';
+            
+            // Configurar botón de trailer
+            modalTrailerButton.onclick = () => {
+                if (movie.trailer && movie.trailer.trim() !== '') {
+                    // Abrir YouTube en nueva pestaña
+                    window.open(movie.trailer, '_blank');
+                } else {
+                    alert(`No hay trailer disponible para "${movie.title}"`);
+                }
+            };
+            
+            // Configurar botón de añadir al carrito
+            modalAddToCart.onclick = () => {
+                addToCart(movie);
+                closeModal();
+            };
+            
+            // Mostrar modal
+            movieModal.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            movieModal.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // Añadir película al carrito
+        function addToCart(movie) {
+            cartItems.push(movie);
+            updateCartCount();
+            updateCartItems();
+            validateCheckout();
+        }
+
+        // Actualizar contador del carrito
+        function updateCartCount() {
+            if (cartItems.length > 0) {
+                cartCount.textContent = cartItems.length;
+                cartCount.classList.remove('hidden');
+            } else {
+                cartCount.classList.add('hidden');
+            }
+        }
+
+        // Actualizar items del carrito
+        function updateCartItems() {
+            if (cartItems.length === 0) {
+                cartEmpty.style.display = 'flex';
+                cartItems_el.style.display = 'none';
+            } else {
+                cartEmpty.style.display = 'none';
+                cartItems_el.style.display = 'flex';
+                
+                cartItems_el.innerHTML = '';
+                
+                cartItems.forEach((item, index) => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    
+                    cartItem.innerHTML = `
+                        <div class="cart-item-image">
+                            <img src="${item.image}" alt="${item.title}">
+                        </div>
+                        <div class="cart-item-info">
+                            <p class="cart-item-title">${item.title}</p>
+                            <p class="cart-item-price">$${item.price.toFixed(2)}</p>
+                        </div>
+                        <button class="remove-item">×</button>
+                    `;
+                    
+                    const removeButton = cartItem.querySelector('.remove-item');
+                    removeButton.addEventListener('click', () => {
+                        removeFromCart(index);
+                    });
+                    
+                    cartItems_el.appendChild(cartItem);
+                });
+            }
+            
+            // Actualizar total
+            const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+            totalAmount.textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Eliminar item del carrito
+        function removeFromCart(index) {
+            cartItems.splice(index, 1);
+            updateCartCount();
+            updateCartItems();
+            validateCheckout();
+        }
+
+        // Mostrar/ocultar carrito
+        function toggleCart() {
+            cartSidebar.classList.toggle('open');
+            
+            if (cartSidebar.classList.contains('open')) {
+                overlay.style.display = 'block';
+                updateCartItems();
+            } else {
+                overlay.style.display = 'none';
+            }
+        }
+
+        // Cerrar carrito
+        function closeCart() {
+            cartSidebar.classList.remove('open');
+            overlay.style.display = 'none';
+        }
+
+        // Validar formulario de checkout
+        function validateCheckout() {
+            const name = customerNameInput.value.trim();
+            checkoutButton.disabled = name === '' || cartItems.length === 0;
+        }
+
+        // Procesar checkout
+        function handleCheckout() {
+            const name = customerNameInput.value.trim();
+            
+            if (name === '' || cartItems.length === 0) return;
+            
+            // Guardar compra en el historial
+            const purchase = {
+                customerName: name,
+                items: [...cartItems],
+                total: cartItems.reduce((sum, item) => sum + item.price, 0),
+                date: new Date().toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+            
+            purchaseHistory.push(purchase);
+            localStorage.setItem('purchaseHistory', JSON.stringify(purchaseHistory));
+            
+            alert(`¡Compra completada! Gracias ${name} por tu compra.`);
+            
+            // Limpiar carrito
+            cartItems = [];
+            updateCartCount();
+            updateCartItems();
+            customerNameInput.value = '';
+            validateCheckout();
+            closeCart();
+        }
+
+        // Mostrar/ocultar modal de autenticación
+        function toggleAuthModal() {
+            if (currentUser) {
+                // Si hay un usuario logueado, cerrar sesión
+                currentUser = null;
+                userText.textContent = 'Iniciar Sesión';
+                purchaseHistoryPanel.style.display = 'none';
+            } else {
+                // Si no hay usuario logueado, mostrar modal de autenticación
+                authModal.style.display = 'block';
+                overlay.style.display = 'block';
+                switchAuthTab('login');
+            }
+        }
+
+        // Cerrar modal de autenticación
+        function closeAuthModal() {
+            authModal.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // Cambiar entre tabs de login y registro
+        function switchAuthTab(tabName) {
+            // Actualizar clases activas de tabs
+            authTabs.forEach(tab => {
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Mostrar formulario correspondiente
+            if (tabName === 'login') {
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+            } else {
+                loginForm.classList.remove('active');
+                registerForm.classList.add('active');
+            }
+        }
+
+        // Configurar eventos de autenticación
+        document.getElementById('login-button').addEventListener('click', function() {
+            const username = document.getElementById('login-username').value.trim();
+            if (username) {
+                currentUser = { username: username };
+                userText.textContent = username;
+                closeAuthModal();
+                alert('¡Sesión iniciada con éxito!');
+            }
+        });
+
+        document.getElementById('register-button').addEventListener('click', function() {
+            const username = document.getElementById('register-username').value.trim();
+            const password = document.getElementById('register-password').value.trim();
+            const confirmPassword = document.getElementById('register-confirm-password').value.trim();
+            
+            if (username && password && password === confirmPassword) {
+                alert('¡Cuenta creada con éxito!');
+                switchAuthTab('login');
+            } else {
+                alert('Por favor complete todos los campos correctamente');
+            }
+        });
+
+        document.getElementById('login-cancel').addEventListener('click', closeAuthModal);
+        document.getElementById('register-cancel').addEventListener('click', closeAuthModal);
+
+        // Funciones globales para los botones de eliminar/editar
+        window.deleteMovie = deleteMovie;
+        window.editMovie = editMovie;
+
+        // Inicializar la aplicación cuando el DOM esté cargado
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+
+    <!-- Footer -->
+    <footer>
+        <p>Todos los derechos reservados</p>
+        <p>WhatsApp: 986-120-90-21</p>
+        <a href="mailto:jhonmarco555555@gmail.com">jhonmarco555555@gmail.com</a>
+    </footer>
+</body>
+</html>
+
